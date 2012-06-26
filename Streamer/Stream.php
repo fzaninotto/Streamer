@@ -212,12 +212,7 @@ class Stream
      */
     public function pipe(Stream $stream)
     {
-        $nbWrittenBytes = 0;
-        while (!$this->isAtEnd()) {
-            $nbWrittenBytes += $stream->write($this->read());
-        }
-        
-        return $nbWrittenBytes;
+        return stream_copy_to_stream($this->getResource(), $stream->getResource());
     }
     
     public function rewind()
