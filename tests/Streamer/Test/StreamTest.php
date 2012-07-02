@@ -318,14 +318,14 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foobar', $stream->getContent());
     }
 
-    public function testGetContentClosesTheStream()
+    public function testGetContentDoesNotCloseTheStream()
     {
         $handle = fopen('php://temp', 'r+');
         fwrite($handle, 'foobar');
         rewind($handle);
         $stream = new Stream($handle);
         $stream->getContent();
-        $this->assertFalse($stream->isOpen());
+        $this->assertTrue($stream->isOpen());
     }
 
     /**

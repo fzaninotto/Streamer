@@ -165,10 +165,7 @@ class Stream
      */
     public function getContent()
     {
-        $contents = stream_get_contents($this->stream);
-        $this->close();
-
-        return $contents;
+        return stream_get_contents($this->stream);
     }
 
     /**
