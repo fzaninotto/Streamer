@@ -289,23 +289,23 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $stream->read());
     }
 
-    public function testIsAtEndReturnsFalseIfStreamIsNotAtEnd()
+    public function testIsEOFReturnsFalseIfStreamIsNotAtEnd()
     {
         $handle = fopen('php://temp', 'r+');
         fwrite($handle, 'foobar');
         rewind($handle);
         $stream = new Stream($handle);
-        $this->assertFalse($stream->isAtEnd());
+        $this->assertFalse($stream->isEOF());
     }
 
-    public function testIsAtEndReturnstrueIfStreamIsAtEnd()
+    public function testIsEOFReturnsTrueIfStreamIsAtEnd()
     {
         $handle = fopen('php://temp', 'r+');
         fwrite($handle, 'foobar');
         rewind($handle);
         $stream = new Stream($handle);
         $stream->read();
-        $this->assertTrue($stream->isAtEnd());
+        $this->assertTrue($stream->isEOF());
     }
     
     public function testGetContentReturnsFullContentRegardlessOfBufferSize()

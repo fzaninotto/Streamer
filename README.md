@@ -22,7 +22,7 @@ use Streamer/Stream;
 // basic usage
 $stream = new Stream(fopen('smiley.png', 'r'));
 $image = '';
-while (!$stream->isAtEnd()) {
+while (!$stream->isEOF()) {
   $image .= $stream->read();
 }
 

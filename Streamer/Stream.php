@@ -150,9 +150,11 @@ class Stream
     }
 
     /**
+     * Check whether the stream is positioned at the end.
+     *
      * @return Boolean
      */
-    public function isAtEnd()
+    public function isEOF()
     {
         return feof($this->stream);
     }
