@@ -247,11 +247,64 @@ class Stream
     {
         return stream_copy_to_stream($this->getResource(), $stream->getResource());
     }
+
+    /**
+     * Get the position of the file pointer
+     *
+     * @return int
+     */
+    public function getOffset()
+    {
+        $this->assertSeekable();
+        $ret = ftell($this->stream);
+        if (false === $ret) {
+            throw new RuntimeException('Cannot get offset of stream');
+        }
+        
+        return $ret;
+    }
     
+    /**
+     * Move the file pointer to a new position
+     *
+     * The new position, measured in bytes from the beginning of the file,
+     * is obtained by adding $offset to the position specified by $whence.
+     *
+     * @param int $offset
+     * @param int $whence Accepted values are:
+     *              - SEEK_SET - Set position equal to $offset bytes.
+     *              - SEEK_CUR - Set position to current location plus $offset.
+     *              - SEEK_END - Set position to end-of-file plus $offset.
+     */
+    public function seek($offset, $whence = SEEK_SET)
+    {
+        $this->assertSeekable();
+        if (false === fseek($this->stream, $offset, $whence)) {
+            throw new RuntimeException('Cannot seek on stream');
+        }
+    }
+
+    /**
+     * Move the file pointer to the beginning of the stream
+     */
     public function rewind()
     {
-        rewind($this->stream);
+        $this->assertSeekable();
+        if (false === rewind($this->stream)) {
+            throw new RuntimeException('Cannot rewind stream');
+        }
     }
+
+    protected function assertSeekable()
+    {
+        if (!$this->isOpen) {
+            throw new LogicException('Cannot seek on a closed stream');
+        }
+        if (!$this->isSeekable()) {
+            throw new LogicException('Cannot seek on a non-seekable stream');
+        }
+    }
+
     
     public function close()
     {
