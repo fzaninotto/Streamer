@@ -288,6 +288,71 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $stream->read(3);
         $this->assertEquals('', $stream->read());
     }
+    
+    /**
+     * @expectedException Streamer\Exception\LogicException
+     */
+    public function testGetLineThrowsExceptionOnNonReadbleStreams()
+    {
+        $stream = new Stream(fopen('file://' . tempnam(sys_get_temp_dir(), 'foo'), 'w'));
+        $stream->getLine();
+    }
+
+    public function testGetLineReturnsDataFromTheStream()
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "foo");
+        rewind($handle);
+        $stream = new Stream($handle);
+        $this->assertEquals('foo', $stream->getLine());
+    }
+
+    public function tesGetLineDoesNotCloseTheStream()
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, 'foo');
+        rewind($handle);
+        $stream = new Stream($handle);
+        $stream->getLine();
+        $this->assertTrue($stream->isOpen());
+    }
+
+    public function testGetLineStopsAtNewlineString()
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "foo\nbar");
+        rewind($handle);
+        $stream = new Stream($handle);
+        $this->assertEquals('foo', $stream->getLine());
+    }
+
+    public function testGetLineAcceptsALengthParameter()
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "foobar");
+        rewind($handle);
+        $stream = new Stream($handle);
+        $this->assertEquals('foo', $stream->getLine(3));
+    }
+
+    public function testGetLineAcceptsANewlineParameter()
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "foobar");
+        rewind($handle);
+        $stream = new Stream($handle);
+        $this->assertEquals('foo', $stream->getLine(null, 'b'));
+    }
+
+    public function testGetLineReturnsEmptyStringWhenAtTheEndOfStream()
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, 'bar');
+        rewind($handle);
+        $stream = new Stream($handle);
+        $stream->read(3);
+        $this->assertEquals('', $stream->getLine());
+    }
 
     public function testIsEOFReturnsFalseIfStreamIsNotAtEnd()
     {

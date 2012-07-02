@@ -132,12 +132,7 @@ class Stream
      */
     public function read($length = null)
     {
-        if (!$this->isOpen) {
-            throw new LogicException('Cannot read from a closed stream');
-        }
-        if (!$this->isReadable()) {
-            throw new LogicException(sprintf('Cannot read on a non readable stream (current mode is %s)', $this->getMetadataForKey('mode')));
-        }
+        $this->ensureReadable();
         if (null == $length) {
             $length = $this->bufferSize;
         }
@@ -150,13 +145,29 @@ class Stream
     }
 
     /**
-     * Check whether the stream is positioned at the end.
+     * Read one line from the stream.
      *
-     * @return Boolean
+     * Binary-safe. Reading ends when length bytes have been read, when the 
+     * string specified by ending is found (which is not included in the return
+     *  value), or on EOF (whichever comes first).
+     *
+     * @param int $length Maximum number of bytes to read. Defaults to self::$bufferSize.
+     * @param string $ending Line ending to stop at. Defaults to "\n".
+     *
+     * @return string The data read from the stream
      */
-    public function isEOF()
+    public function getLine($length = null, $ending = "\n")
     {
-        return feof($this->stream);
+        $this->ensureReadable();
+        if (null == $length) {
+            $length = $this->bufferSize;
+        }
+        $ret = stream_get_line($this->stream, $length, $ending);
+        if (false === $ret) {
+            throw new RuntimeException('Cannot read stream');
+        }
+        
+        return $ret;
     }
 
     /**
@@ -167,7 +178,28 @@ class Stream
      */
     public function getContent()
     {
+        $this->ensureReadable();
         return stream_get_contents($this->stream);
+    }
+
+    protected function ensureReadable()
+    {
+        if (!$this->isOpen) {
+            throw new LogicException('Cannot read from a closed stream');
+        }
+        if (!$this->isReadable()) {
+            throw new LogicException(sprintf('Cannot read on a non readable stream (current mode is %s)', $this->getMetadataForKey('mode')));
+        }
+    }
+
+    /**
+     * Check whether the stream is positioned at the end.
+     *
+     * @return Boolean
+     */
+    public function isEOF()
+    {
+        return feof($this->stream);
     }
 
     /**
