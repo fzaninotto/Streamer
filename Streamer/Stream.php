@@ -132,7 +132,7 @@ class Stream
      */
     public function read($length = null)
     {
-        $this->ensureReadable();
+        $this->assertReadable();
         if (null == $length) {
             $length = $this->bufferSize;
         }
@@ -158,7 +158,7 @@ class Stream
      */
     public function getLine($length = null, $ending = "\n")
     {
-        $this->ensureReadable();
+        $this->assertReadable();
         if (null == $length) {
             $length = $this->bufferSize;
         }
@@ -178,11 +178,11 @@ class Stream
      */
     public function getContent()
     {
-        $this->ensureReadable();
+        $this->assertReadable();
         return stream_get_contents($this->stream);
     }
 
-    protected function ensureReadable()
+    protected function assertReadable()
     {
         if (!$this->isOpen) {
             throw new LogicException('Cannot read from a closed stream');
@@ -213,12 +213,7 @@ class Stream
      */
     public function write($string, $length = null)
     {
-        if (!$this->isOpen) {
-            throw new LogicException('Cannot write on a closed stream');
-        }
-        if (!$this->isWritable()) {
-            throw new LogicException(sprintf('Cannot write on a non-writable stream (current mode is %s)', $this->getMetadataForKey('mode')));
-        }
+        $this->assertWritable();
         if (null === $length) {
             $ret = fwrite($this->stream, $string);
         } else {
@@ -229,6 +224,16 @@ class Stream
         }
 
         return $ret;
+    }
+
+    protected function assertWritable()
+    {
+        if (!$this->isOpen) {
+            throw new LogicException('Cannot write on a closed stream');
+        }
+        if (!$this->isWritable()) {
+            throw new LogicException(sprintf('Cannot write on a non-writable stream (current mode is %s)', $this->getMetadataForKey('mode')));
+        }
     }
 
     /**
