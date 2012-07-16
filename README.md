@@ -30,7 +30,7 @@ Streamer is published on [packagist.org](http://packagist.org/packages/fzaninott
 
 ```php
 <?php
-use Streamer/Stream;
+use Streamer\Stream;
 
 // basic usage
 $stream = new Stream(fopen('smiley.png', 'r'));
