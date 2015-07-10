@@ -18,6 +18,12 @@ PHP has a very elaborate stream API ; unfortunately, it uses functions for most 
 
 Streamer is published on [packagist.org](http://packagist.org/packages/fzaninotto/Streamer), so you can add it to your `composer.json` file for an easy installation:
 
+```sh
+composer require fzaninotto/Streamer
+```
+
+or
+
 ```json
 {
     "require": {
