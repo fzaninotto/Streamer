@@ -66,6 +66,6 @@ print_r($networkStream);
 
 Streamer is heavily inspired by other Stream class implementations:
 
-* [Guzzle](https://github.com/guzzle/guzzle/blob/master/src/Guzzle/Common/Stream.php)
+* [Guzzle](https://github.com/guzzle/streams/blob/ce5a645ee89ea0914db1f601b917b8bf211e3630/src/Stream.php)
 * [Joomla's Filesystem Stream](http://api.joomla.org/__filesource/fsource_Joomla-Platform_FileSystem--_librariesjoomlafilesystemstream.php.html)
 * [Node.Js Stream API](http://nodejs.org/api/stream.html)
